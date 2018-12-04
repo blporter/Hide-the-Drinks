@@ -15,11 +15,11 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Street
+  - External
+  - Internal
+  - Background
+  - Invisible Walls
   - 
   - 
   - 
