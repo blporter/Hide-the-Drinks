@@ -48,7 +48,7 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	private void Jump() {
-		_playerRigidbody.AddForce(0f, 200f, 0f);
+		_playerRigidbody.AddForce(0f, 250f, 0f);
 	}
 
 	private bool IsGrounded() {
