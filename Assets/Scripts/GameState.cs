@@ -16,7 +16,7 @@ public class GameState : MonoBehaviour
 	private PlayerHealth _playerHealth;
     
 	// Use this for initialization
-	void Start()
+	private void Start()
 	{
 		_player.SetActive(true);
         
@@ -31,7 +31,7 @@ public class GameState : MonoBehaviour
 	}
 
 	// Update is called once per frame
-	void Update()
+	private void Update()
 	{
 		if (_gameStarted == false && Input.GetKeyUp(KeyCode.Space))
 		{
