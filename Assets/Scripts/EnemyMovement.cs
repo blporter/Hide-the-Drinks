@@ -65,6 +65,6 @@ public class EnemyMovement : MonoBehaviour {
 	}
 
 	private bool ReachedDestination(Vector3 location) {
-		return Vector3.Distance(transform.position, location) < 1f;
+		return Vector3.Distance(transform.position, location) < 2f;
 	}
 }
