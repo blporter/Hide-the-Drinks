@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,25 +18,17 @@ public class EnemyMovement : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		float distanceToTarget = CalculateDistance(_target);
+		RaycastHit hit = new RaycastHit();
+		Vector3 direction = _target.position - transform.position;
+		float angle = Vector3.Angle(direction, transform.forward);
 
-		if (distanceToTarget < 4f) {
-			_enemyAgent.SetDestination(_target.position);
+		if (Physics.Raycast(transform.position, direction, out hit)) {
+			if (hit.transform == _target && angle < 60.0f) {
+				_enemyAgent.SetDestination(_target.position);
+			}
+			else {
+				_enemyAgent.SetDestination(_startingLocation);
+			}
 		}
-		else {
-			_enemyAgent.SetDestination(_startingLocation);
-		}
-	}
-
-	private float CalculateDistance(Transform target) {
-		Vector3 currentPosition = transform.position;
-		Vector3 targetPosition = target.position;
-
-		float x = Math.Abs(currentPosition.x - targetPosition.x);
-		float z = Math.Abs(currentPosition.z - targetPosition.z);
-
-		float distance = Mathf.Sqrt((float) Math.Pow(x, 2) + (float) Math.Pow(z, 2));
-
-		return distance;
 	}
 }
