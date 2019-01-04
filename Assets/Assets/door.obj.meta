@@ -5,13 +5,25 @@ ModelImporter:
   fileIDToRecycleName:
     100000: //RootNode
     100002: door_building_group
+    100004: door:building_group_door:door_door_mesh
+    100006: door1:building_group_door1:door_door1:door_mesh_door_mesh
     400000: //RootNode
     400002: door_building_group
+    400004: door:building_group_door:door_door_mesh
+    400006: door1:building_group_door1:door_door1:door_mesh_door_mesh
     2100000: door_building_groupMat
     2300000: door_building_group
+    2300002: door:building_group_door:door_door_mesh
+    2300004: door1:building_group_door1:door_door1:door_mesh_door_mesh
     3300000: door_building_group
+    3300002: door:building_group_door:door_door_mesh
+    3300004: door1:building_group_door1:door_door1:door_mesh_door_mesh
     4300000: door_building_group
+    4300002: door:building_group_door:door_door_mesh
+    4300004: door1:building_group_door1:door_door1:door_mesh_door_mesh
     6400000: door_building_group
+    6400002: door:building_group_door:door_door_mesh
+    6400004: door1:building_group_door1:door_door1:door_mesh_door_mesh
   externalObjects: {}
   materials:
     importMaterials: 0
