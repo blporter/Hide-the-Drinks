@@ -5,12 +5,13 @@ public class PlayerMovement : MonoBehaviour {
 	private float _moveHorizontal;
 	private float _moveVertical;
 	private float _distanceToGround;
-	private Vector3 _movement;
 	private bool _canDash = true;
+	private Vector3 _movement;
+	private Rigidbody _playerRigidbody;
+
 	private const float DashTimer = 1f;
 	private const float MovementSpeed = 3f;
 	private const float TurningSpeed = 20f;
-	private Rigidbody _playerRigidbody;
 
 	// Use this for initialization
 	void Start() {
@@ -31,7 +32,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// Dash
-		if (Input.GetKeyDown(KeyCode.LeftShift)) {
+		if (Input.GetKeyDown(KeyCode.LeftShift) && IsGrounded()) {
 			TryDash();
 		}
 	}

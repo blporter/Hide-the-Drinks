@@ -1,17 +1,16 @@
 fileFormatVersion: 2
-guid: 95a214b389dbd47dfb1dcc1e6534121a
+guid: 59bc5ab7c2713477eaa8116c99db91d2
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: pCube10
-    100002: //RootNode
-    400000: pCube10
-    400002: //RootNode
-    2100000: pCube10Mat
-    2300000: pCube10
-    3300000: pCube10
-    4300000: pCube10
-    6400000: pCube10
+    100000: //RootNode
+    100002: roofHoles:roof_roofHoles:roof_group_roofHoles_mesh
+    400000: //RootNode
+    400002: roofHoles:roof_roofHoles:roof_group_roofHoles_mesh
+    2100000: roofHoles_roof_roofHoles_roof_group_roofHoles_meshMat
+    2300000: roofHoles:roof_roofHoles:roof_group_roofHoles_mesh
+    3300000: roofHoles:roof_roofHoles:roof_group_roofHoles_mesh
+    4300000: roofHoles:roof_roofHoles:roof_group_roofHoles_mesh
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -45,7 +44,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 0.01
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1

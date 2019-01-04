@@ -5,12 +5,17 @@ ModelImporter:
   fileIDToRecycleName:
     100000: base1
     100002: //RootNode
+    100004: doubleChimney_mesh
     400000: base1
     400002: //RootNode
+    400004: doubleChimney_mesh
     2100000: base1Mat
     2300000: base1
+    2300002: doubleChimney_mesh
     3300000: base1
+    3300002: doubleChimney_mesh
     4300000: base1
+    4300002: doubleChimney_mesh
   externalObjects: {}
   materials:
     importMaterials: 0
