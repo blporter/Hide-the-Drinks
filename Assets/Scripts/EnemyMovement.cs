@@ -12,9 +12,9 @@ public class EnemyMovement : MonoBehaviour {
 	private Vector3 _currentDestination;
 	private Vector3 _currentRotation;
 
-	private const float LineOfSight = 70.0f;
+	private const float LineOfSight = 80.0f;
 	private const float PauseLength = 3f;
-	private const float ChaseSpeed = 2f;
+	private const float ChaseSpeed = 2.5f;
 	private const float WanderSpeed = 1f;
 	private const float TurningSpeed = 10f;
 
@@ -73,28 +73,14 @@ public class EnemyMovement : MonoBehaviour {
 	}
 
 	private void LookAround() {
-		_enemyAgent.speed = WanderSpeed;
-		Vector3 targetDirection = new Vector3(_target.position.x, 0f, _target.position.z);
+		Vector3 targetDirection = _target.position;
 		Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+		// Look at last sighting of player
 		transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, TurningSpeed * Time.deltaTime);
-		_isSearching = false;
-	}
-
-//	private void LookAround() {
-//		Chase();
-//		_enemyAgent.speed = WanderSpeed;
-//
-//		if (!_isSearching) {
-//			return;
-//		}
-//
-//		transform.rotation = Quaternion.Euler(0f, 20f, 0f);
-//		StartCoroutine(Waiting());
-//	}
-
-	private IEnumerator Waiting() {
-		_isSearching = true;
-		yield return new WaitForSeconds(PauseLength);
+		
+		// Head towards last sighting of player
+		_currentDestination = new Vector3(targetDirection.x, 0f, targetDirection.z);
+		_enemyAgent.SetDestination(_currentDestination);
 		_isSearching = false;
 	}
 
