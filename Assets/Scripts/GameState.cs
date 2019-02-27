@@ -50,7 +50,6 @@ public class GameState : MonoBehaviour {
 
 		_playerMovement.enabled = true;
 		_enemyMovement.enabled = true;
-		_enemyMovement.Wander();
 	}
 
 	private void EndGame() {
