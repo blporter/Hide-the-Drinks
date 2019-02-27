@@ -1,19 +1,22 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using MalbersAnimations;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-//	private float _distanceToGround;
-	private bool _canDash = true;
+	[SerializeField] private float _dodgeForce = 5.0f;
+	[SerializeField] private float _jumpForce = 5.0f;
+	[SerializeField] private float _speedMultiplier = 1.8f;
+
+
+	private bool _canDodge = true;
 	private float _playerSpeed;
 	private Vector3 _movement;
 	private Rigidbody _playerRigidbody;
-
 	private Animator _playerAnimator;
-//	private BoxCollider _collider;
 
-	private const float DashTimer = 1f;
-	private const float DashForce = 4f;
-	private const float JumpForce = 4f;
+	private const float DodgeTimer = 1f;
 	private const float Acceleration = 6f;
 	private const float MaxSpeed = 2f;
 	private const float TurningSpeed = 15f;
@@ -22,8 +25,6 @@ public class PlayerMovement : MonoBehaviour {
 	void Start() {
 		_playerRigidbody = GetComponent<Rigidbody>();
 		_playerAnimator = GetComponent<Animator>();
-//		_collider = GetComponent<BoxCollider>();
-//		_distanceToGround = GetComponent<Collider>().bounds.extents.y;
 	}
 
 	// Update is called once per frame
@@ -32,6 +33,9 @@ public class PlayerMovement : MonoBehaviour {
 		_movement.x = Input.GetAxisRaw("Horizontal");
 		_movement.z = Input.GetAxisRaw("Vertical");
 
+		Debug.DrawLine(transform.position,
+			new Vector3(transform.position.x, transform.position.y - 0.05f, transform.position.z), Color.cyan, 1.0f);
+
 		// Jump
 		if (Input.GetKeyDown(KeyCode.Space) && IsGrounded()) {
 			Jump();
@@ -39,7 +43,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		// Dash
 		if (Input.GetKeyDown(KeyCode.LeftShift) && IsGrounded()) {
-			TryDash();
+			TryDodge();
 		}
 	}
 
@@ -54,7 +58,8 @@ public class PlayerMovement : MonoBehaviour {
 			Quaternion newRotation =
 				Quaternion.Lerp(_playerRigidbody.rotation, targetRotation, TurningSpeed * Time.deltaTime);
 
-			_playerRigidbody.MovePosition(transform.position + _movement * Time.deltaTime * _playerSpeed);
+			_playerRigidbody.MovePosition(transform.position +
+			                              _movement * Time.deltaTime * _playerSpeed * _speedMultiplier);
 			_playerRigidbody.MoveRotation(newRotation);
 			_playerAnimator.SetFloat("Speed", _playerSpeed);
 		}
@@ -66,39 +71,51 @@ public class PlayerMovement : MonoBehaviour {
 
 	private void Jump() {
 		_playerAnimator.SetBool("Jump", true);
-		_playerRigidbody.AddForce(Vector3.up * JumpForce, ForceMode.VelocityChange);
+		_playerRigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
 		_playerAnimator.stabilizeFeet = true;
-
 	}
 
 	private bool IsGrounded() {
-		RaycastHit groundHitInfo = new RaycastHit();
+		RaycastHit groundHitInfo;
 //		return Physics.SphereCast(new Ray(_collider.bounds.center, Vector3.down), 0.2f, _collider.bounds.extents.y + 0.1f);
 //		return !Physics.SphereCast(transform.position, _collider.size.x * _collider.size.z / 2, Vector3.down,
 //			out groundHitInfo,
 //			_collider.size.y);
-//		return Physics.CheckBox(_groundCollider.bounds.center,
-//			new Vector3(_groundCollider.bounds.center.x, _groundCollider.bounds.min.y - 0.1f,
-//				_groundCollider.bounds.center.z));
-//		return Physics.Raycast(transform.position, -Vector3.up, _distanceToGround + 0.1f);
-		return true;
+
+		if (!Physics.Raycast(
+			new Vector3(transform.position.x, transform.position.y + 0.05f, transform.position.z),
+			new Vector3(transform.position.x, transform.position.y - 1.0f, transform.position.z),
+			out groundHitInfo,
+			1.0f)) return false;
+		
+		var debugString = "Distance: " + groundHitInfo.distance +
+		                  "\nCollider: " + groundHitInfo.collider +
+		                  "\nTransform: " + groundHitInfo.transform;
+		Debug.Log(debugString);
+
+		if (!groundHitInfo.collider.CompareTag("Player")) {
+			return groundHitInfo.distance < 1.0f;
+		}
+
+		return false;
 	}
 
-	private void TryDash() {
-		if (!_canDash) return;
-		Dash();
+	private void TryDodge() {
+		if (!_canDodge) return;
+		if (!(_playerSpeed > 0f)) return;
+		Dodge();
 		StartCoroutine(DashCooldown());
 	}
 
-	private void Dash() {
+	private void Dodge() {
 		_playerAnimator.SetBool("Dash", true);
-		Vector3 dashMovement = new Vector3(_movement.x * DashForce, 0f, _movement.z * DashForce);
+		Vector3 dashMovement = new Vector3(_movement.x * _dodgeForce, 0f, _movement.z * _dodgeForce);
 		_playerRigidbody.AddForce(dashMovement, ForceMode.VelocityChange);
 	}
 
 	private IEnumerator DashCooldown() {
-		_canDash = false;
-		yield return new WaitForSeconds(DashTimer);
-		_canDash = true;
+		_canDodge = false;
+		yield return new WaitForSeconds(DodgeTimer);
+		_canDodge = true;
 	}
 }

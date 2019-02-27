@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour {
@@ -21,19 +20,23 @@ public class EnemyMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		_enemyAgent = GetComponent<NavMeshAgent>();
+		_currentDestination = transform.position;
 	}
 
 	// Update is called once per frame
 	void Update() {
-		RaycastHit hit = new RaycastHit();
+		RaycastHit hit;
 		Vector3 direction = _target.position - transform.position;
 		float angle = Vector3.Angle(direction, transform.forward);
-
-		if (Physics.Raycast(transform.position, direction, out hit)) {
+		
+		Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, Color.green);
+				
+		if (Physics.Raycast(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, out hit)) {
 			if (hit.transform == _target && angle < LineOfSight) {
 				// found player, begin chasing
 				_isChasing = true;
 				_isSearching = false;
+				Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, Color.red);
 				Chase();
 			}
 			else {
@@ -41,13 +44,19 @@ public class EnemyMovement : MonoBehaviour {
 				if (_isChasing) {
 					_isChasing = false;
 					_isSearching = true;
-					LookAround();
+					Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, Color.yellow);
+					Search();
 				}
 			}
 		}
 
 		// wandering, reached patrol point.
-		if (ReachedDestination(_currentDestination, 1f) && !_isSearching) {
+		if (ReachedDestination(_currentDestination, 0.1f) && !_isChasing) {
+			if (_isSearching) {
+				_isSearching = false;
+				LookAround();
+			}
+
 			if (_currentTime < 0.1f) {
 				_currentTime = Time.time;
 			}
@@ -62,26 +71,32 @@ public class EnemyMovement : MonoBehaviour {
 
 	private void Chase() {
 		_enemyAgent.speed = ChaseSpeed;
+		// Follow player
 		_currentDestination = new Vector3(_target.position.x, 0f, _target.position.z);
 		_enemyAgent.SetDestination(_currentDestination);
 	}
 
-	public void Wander() {
+	private void Wander() {
 		_enemyAgent.speed = WanderSpeed;
+		// Pick a new patrol spot
 		_currentDestination = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-4.4f, 4.4f));
+		_enemyAgent.SetDestination(_currentDestination);
+	}
+
+	private void Search() {
+		Vector3 targetDirection = _target.position;
+
+		// Head towards last sighting of player
+		_currentDestination = new Vector3(targetDirection.x, 0f, targetDirection.z);
 		_enemyAgent.SetDestination(_currentDestination);
 	}
 
 	private void LookAround() {
 		Vector3 targetDirection = _target.position;
 		Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
 		// Look at last sighting of player
 		transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, TurningSpeed * Time.deltaTime);
-		
-		// Head towards last sighting of player
-		_currentDestination = new Vector3(targetDirection.x, 0f, targetDirection.z);
-		_enemyAgent.SetDestination(_currentDestination);
-		_isSearching = false;
 	}
 
 	private bool ReachedDestination(Vector3 location, float distance) {
