@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour {
 	[SerializeField] private float _jumpForce = 5.0f;
 	[SerializeField] private float _speedMultiplier = 1.8f;
 
+	public LayerMask GroundLayer;
 
 	private bool _canDodge = true;
 	private float _playerSpeed;
@@ -21,27 +22,22 @@ public class PlayerMovement : MonoBehaviour {
 	private const float MaxSpeed = 2f;
 	private const float TurningSpeed = 15f;
 
-	// Use this for initialization
 	void Start() {
 		_playerRigidbody = GetComponent<Rigidbody>();
 		_playerAnimator = GetComponent<Animator>();
 	}
 
-	// Update is called once per frame
 	void Update() {
 		_movement = Vector3.zero;
 		_movement.x = Input.GetAxisRaw("Horizontal");
 		_movement.z = Input.GetAxisRaw("Vertical");
-
-		Debug.DrawLine(transform.position,
-			new Vector3(transform.position.x, transform.position.y - 0.05f, transform.position.z), Color.cyan, 1.0f);
 
 		// Jump
 		if (Input.GetKeyDown(KeyCode.Space) && IsGrounded()) {
 			Jump();
 		}
 
-		// Dash
+		// Dodge
 		if (Input.GetKeyDown(KeyCode.LeftShift) && IsGrounded()) {
 			TryDodge();
 		}
@@ -67,53 +63,54 @@ public class PlayerMovement : MonoBehaviour {
 			_playerSpeed = 0f;
 			_playerAnimator.SetFloat("Speed", 0f);
 		}
+
+//		Debug.Log(IsGrounded());
+
+		// TODO: fix falling detection.
+		// Check if falling
+//		if (!IsGrounded() && !_playerAnimator.GetBool("Jump") && !_playerAnimator.GetBool("Dodge")) {
+//			_playerAnimator.SetBool("MidAir", true);
+//		}
+//		else {
+//			_playerAnimator.SetBool("Midair", false);
+//		}
 	}
 
 	private void Jump() {
 		_playerAnimator.SetBool("Jump", true);
 		_playerRigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
-		_playerAnimator.stabilizeFeet = true;
 	}
 
 	private bool IsGrounded() {
 		RaycastHit groundHitInfo;
-//		return Physics.SphereCast(new Ray(_collider.bounds.center, Vector3.down), 0.2f, _collider.bounds.extents.y + 0.1f);
-//		return !Physics.SphereCast(transform.position, _collider.size.x * _collider.size.z / 2, Vector3.down,
-//			out groundHitInfo,
-//			_collider.size.y);
 
-		if (!Physics.Raycast(
-			new Vector3(transform.position.x, transform.position.y + 0.05f, transform.position.z),
-			new Vector3(transform.position.x, transform.position.y - 1.0f, transform.position.z),
-			out groundHitInfo,
-			1.0f)) return false;
-		
-		var debugString = "Distance: " + groundHitInfo.distance +
-		                  "\nCollider: " + groundHitInfo.collider +
-		                  "\nTransform: " + groundHitInfo.transform;
-		Debug.Log(debugString);
+		Vector3 position = transform.position;
+		Vector3 direction = Vector3.down;
+		float distance = 0.3f;
 
-		if (!groundHitInfo.collider.CompareTag("Player")) {
-			return groundHitInfo.distance < 1.0f;
-		}
+		Debug.DrawRay(position, direction, Color.green);
 
-		return false;
+		Physics.SphereCast(position + Vector3.up * (0.2f + Physics.defaultContactOffset),
+			0.2f - Physics.defaultContactOffset, direction, out groundHitInfo, distance,
+			GroundLayer, QueryTriggerInteraction.Ignore);
+
+		return groundHitInfo.collider != null;
 	}
 
 	private void TryDodge() {
 		if (!_canDodge) return;
 		if (!(_playerSpeed > 0f)) return;
 		Dodge();
-		StartCoroutine(DashCooldown());
+		StartCoroutine(DodgeCooldown());
 	}
 
 	private void Dodge() {
-		_playerAnimator.SetBool("Dash", true);
-		Vector3 dashMovement = new Vector3(_movement.x * _dodgeForce, 0f, _movement.z * _dodgeForce);
-		_playerRigidbody.AddForce(dashMovement, ForceMode.VelocityChange);
+		_playerAnimator.SetBool("Dodge", true);
+		Vector3 dodgeMovement = new Vector3(_movement.x * _dodgeForce, 0f, _movement.z * _dodgeForce);
+		_playerRigidbody.AddForce(dodgeMovement, ForceMode.VelocityChange);
 	}
 
-	private IEnumerator DashCooldown() {
+	private IEnumerator DodgeCooldown() {
 		_canDodge = false;
 		yield return new WaitForSeconds(DodgeTimer);
 		_canDodge = true;

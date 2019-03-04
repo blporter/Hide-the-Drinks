@@ -20,11 +20,11 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 4
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 1583144}
   m_Layer: 9
   m_Name: plane
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -195,7 +195,7 @@ Transform:
   m_GameObject: {fileID: 1583143}
   m_LocalRotation: {x: 0.0031265668, y: -0, z: -0, w: 0.9999951}
   m_LocalPosition: {x: -0.38490474, y: 0, z: -3.6334825}
-  m_LocalScale: {x: 2.6230142, y: 2.6230142, z: 2.6230142}
+  m_LocalScale: {x: 8.710541, y: 8.710541, z: 8.710541}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -210,7 +210,7 @@ GameObject:
   - component: {fileID: 52047966}
   m_Layer: 10
   m_Name: stairs
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 379158903}
   m_Layer: 10
   m_Name: structure
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -276,7 +276,7 @@ GameObject:
   - component: {fileID: 635179832}
   m_Layer: 10
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -454,7 +454,7 @@ GameObject:
   - component: {fileID: 859921989}
   m_Layer: 10
   m_Name: pillar
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -544,7 +544,7 @@ GameObject:
   - component: {fileID: 1121465212}
   m_Layer: 10
   m_Name: pillar 2
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -655,10 +655,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 1071743225908466, guid: 0917515c884e04076a55ca244bf57e71, type: 2}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0917515c884e04076a55ca244bf57e71, type: 2}
   m_IsPrefabAsset: 0
@@ -672,7 +668,7 @@ GameObject:
   - component: {fileID: 1205932769}
   m_Layer: 10
   m_Name: props
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -706,7 +702,7 @@ GameObject:
   - component: {fileID: 1389519610}
   m_Layer: 10
   m_Name: main step
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -857,7 +853,7 @@ GameObject:
   - component: {fileID: 1761542901}
   m_Layer: 10
   m_Name: second step
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -942,7 +938,7 @@ GameObject:
   - component: {fileID: 1873081934}
   m_Layer: 10
   m_Name: bridge
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1027,7 +1023,7 @@ GameObject:
   - component: {fileID: 1974757213}
   m_Layer: 10
   m_Name: third step
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1112,7 +1108,7 @@ GameObject:
   - component: {fileID: 1984019985}
   m_Layer: 10
   m_Name: ramp
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
