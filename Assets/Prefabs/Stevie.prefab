@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 137775771924030712}
   m_Layer: 0
   m_Name: Racoon Mesh
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1798,7 +1798,7 @@ Animator:
   m_Avatar: {fileID: 9000000, guid: 42b16888dccfed94fb39302aa553204d, type: 3}
   m_Controller: {fileID: 9100000, guid: 998b9ecb0d8ff4c2ea8b2e4383c2a8f7, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -1847,6 +1847,9 @@ MonoBehaviour:
   _dodgeForce: 5
   _jumpForce: 5
   _speedMultiplier: 1.8
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 19968
 --- !u!135 &135174991814225662
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1905,7 +1908,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.2
-  m_Height: 0.9
+  m_Height: 0.7
   m_Direction: 2
   m_Center: {x: 0, y: 0.2, z: 0.15}
 --- !u!136 &136270297185024090
