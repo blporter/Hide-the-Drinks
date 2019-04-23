@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Player;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -14,7 +15,6 @@ public class GameState : MonoBehaviour {
 	private PlayerMovement _playerMovement;
 	private PlayerHealth _playerHealth;
 
-	// Use this for initialization
 	private void Start() {
 		_player.SetActive(true);
 
@@ -27,7 +27,6 @@ public class GameState : MonoBehaviour {
 		_enemyMovement.enabled = false;
 	}
 
-	// Update is called once per frame
 	private void Update() {
 		if (_gameStarted == false && Input.GetKeyUp(KeyCode.Space)) {
 			StartGame();
