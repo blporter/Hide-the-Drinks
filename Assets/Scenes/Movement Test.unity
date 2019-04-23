@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 635179834}
   - component: {fileID: 635179833}
   - component: {fileID: 635179832}
-  m_Layer: 10
+  m_Layer: 14
   m_Name: Sphere
   m_TagString: Structure
   m_Icon: {fileID: 0}

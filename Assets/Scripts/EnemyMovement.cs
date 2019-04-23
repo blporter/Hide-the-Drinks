@@ -11,26 +11,25 @@ public class EnemyMovement : MonoBehaviour {
 	private Vector3 _currentDestination;
 	private Vector3 _currentRotation;
 
+	public float PauseLength = 3f;
+	public float ChaseSpeed = 2.5f;
+	public float WanderSpeed = 1f;
+
 	private const float LineOfSight = 80.0f;
-	private const float PauseLength = 3f;
-	private const float ChaseSpeed = 2.5f;
-	private const float WanderSpeed = 1f;
 	private const float TurningSpeed = 10f;
 
-	// Use this for initialization
 	void Start() {
 		_enemyAgent = GetComponent<NavMeshAgent>();
 		_currentDestination = transform.position;
 	}
 
-	// Update is called once per frame
 	void Update() {
 		RaycastHit hit;
 		Vector3 direction = _target.position - transform.position;
 		float angle = Vector3.Angle(direction, transform.forward);
-		
+
 		Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, Color.green);
-				
+
 		if (Physics.Raycast(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, out hit)) {
 			if (hit.transform == _target && angle < LineOfSight) {
 				// found player, begin chasing
@@ -44,7 +43,8 @@ public class EnemyMovement : MonoBehaviour {
 				if (_isChasing) {
 					_isChasing = false;
 					_isSearching = true;
-					Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, Color.yellow);
+					Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f,
+						Color.yellow);
 					Search();
 				}
 			}
@@ -68,6 +68,8 @@ public class EnemyMovement : MonoBehaviour {
 			}
 		}
 	}
+
+	#region Movement Patterns
 
 	private void Chase() {
 		_enemyAgent.speed = ChaseSpeed;
@@ -102,4 +104,6 @@ public class EnemyMovement : MonoBehaviour {
 	private bool ReachedDestination(Vector3 location, float distance) {
 		return Vector3.Distance(transform.position, location) < distance;
 	}
+
+	#endregion
 }

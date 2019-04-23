@@ -1823,7 +1823,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1197496880854184}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bca8dde362440449eae39c902f2b2901, type: 3}
   m_Name: 
@@ -1844,9 +1844,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab9ff19996f99489a9c14a52e0cfb1eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dodgeForce: 5
-  _jumpForce: 5
-  _speedMultiplier: 1.8
+  _dodgeForce: 4
+  _jumpForce: 4
+  _speedMultiplier: 1.6
+  _turningSpeed: 5
   GroundLayer:
     serializedVersion: 2
     m_Bits: 19968
