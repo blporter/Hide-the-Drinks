@@ -2,15 +2,15 @@
 
 namespace Player {
 	public class PlayerHealth : MonoBehaviour {
-		public bool Alive;
+		public bool alive;
 
-		void Start() {
-			Alive = true;
+		private void Start() {
+			alive = true;
 		}
 
 		private void OnTriggerEnter(Collider other) {
-			if (other.CompareTag("Enemy") && Alive) {
-				Alive = false;
+			if (other.CompareTag("Enemy") && alive) {
+				alive = false;
 			}
 		}
 	}

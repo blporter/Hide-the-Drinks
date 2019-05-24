@@ -1847,7 +1847,7 @@ MonoBehaviour:
   _dodgeForce: 4
   _jumpForce: 4
   _speedMultiplier: 1.6
-  _turningSpeed: 5
+  _turningSpeed: 8
   GroundLayer:
     serializedVersion: 2
     m_Bits: 19968

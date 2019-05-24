@@ -2,7 +2,7 @@
 using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour {
-	[SerializeField] private Transform _target;
+	[SerializeField] private Transform target;
 
 	private NavMeshAgent _enemyAgent;
 	private bool _isChasing;
@@ -11,9 +11,9 @@ public class EnemyMovement : MonoBehaviour {
 	private Vector3 _currentDestination;
 	private Vector3 _currentRotation;
 
-	public float PauseLength = 3f;
-	public float ChaseSpeed = 2.5f;
-	public float WanderSpeed = 1f;
+	public float pauseLength = 3f;
+	public float chaseSpeed = 2.5f;
+	public float wanderSpeed = 1f;
 
 	private const float LineOfSight = 80.0f;
 	private const float TurningSpeed = 10f;
@@ -25,17 +25,20 @@ public class EnemyMovement : MonoBehaviour {
 
 	void Update() {
 		RaycastHit hit;
-		Vector3 direction = _target.position - transform.position;
-		float angle = Vector3.Angle(direction, transform.forward);
+		var t = transform;
+		var up = t.up;
 
-		Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, Color.green);
+		Vector3 direction = target.position - t.position;
+		float angle = Vector3.Angle(direction, t.forward);
 
-		if (Physics.Raycast(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, out hit)) {
-			if (hit.transform == _target && angle < LineOfSight) {
+		Debug.DrawRay(transform.position + up * 0.9f, direction - up * 0.75f, Color.green);
+
+		if (Physics.Raycast(t.position + up * 0.9f, direction - up * 0.75f, out hit)) {
+			if (hit.transform == target && angle < LineOfSight) {
 				// found player, begin chasing
 				_isChasing = true;
 				_isSearching = false;
-				Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f, Color.red);
+				Debug.DrawRay(transform.position + up * 0.9f, direction - up * 0.75f, Color.red);
 				Chase();
 			}
 			else {
@@ -43,7 +46,7 @@ public class EnemyMovement : MonoBehaviour {
 				if (_isChasing) {
 					_isChasing = false;
 					_isSearching = true;
-					Debug.DrawRay(transform.position + transform.up * 0.9f, direction - transform.up * 0.75f,
+					Debug.DrawRay(transform.position + up * 0.9f, direction - up * 0.75f,
 						Color.yellow);
 					Search();
 				}
@@ -62,7 +65,7 @@ public class EnemyMovement : MonoBehaviour {
 			}
 
 			// wander to new patrol point.
-			if (Time.time - _currentTime >= PauseLength) {
+			if (Time.time - _currentTime >= pauseLength) {
 				_currentTime = 0f;
 				Wander();
 			}
@@ -72,21 +75,22 @@ public class EnemyMovement : MonoBehaviour {
 	#region Movement Patterns
 
 	private void Chase() {
-		_enemyAgent.speed = ChaseSpeed;
+		_enemyAgent.speed = chaseSpeed;
+		var position = target.position;
 		// Follow player
-		_currentDestination = new Vector3(_target.position.x, 0f, _target.position.z);
+		_currentDestination = new Vector3(position.x, 0f, position.z);
 		_enemyAgent.SetDestination(_currentDestination);
 	}
 
 	private void Wander() {
-		_enemyAgent.speed = WanderSpeed;
+		_enemyAgent.speed = wanderSpeed;
 		// Pick a new patrol spot
 		_currentDestination = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-4.4f, 4.4f));
 		_enemyAgent.SetDestination(_currentDestination);
 	}
 
 	private void Search() {
-		Vector3 targetDirection = _target.position;
+		Vector3 targetDirection = target.position;
 
 		// Head towards last sighting of player
 		_currentDestination = new Vector3(targetDirection.x, 0f, targetDirection.z);
@@ -94,7 +98,7 @@ public class EnemyMovement : MonoBehaviour {
 	}
 
 	private void LookAround() {
-		Vector3 targetDirection = _target.position;
+		Vector3 targetDirection = target.position;
 		Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
 
 		// Look at last sighting of player
