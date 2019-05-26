@@ -379,8 +379,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df01d3c36874948d18a095f03c4b55c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 970963507}
-  _offset: {x: 0, y: 3, z: -3}
+  player: {fileID: 970963507}
+  offset: {x: 0, y: 2.5, z: -2.5}
 --- !u!81 &781479944
 AudioListener:
   m_ObjectHideFlags: 0
@@ -654,11 +654,6 @@ Prefab:
     - target: {fileID: 4835577380730780, guid: 0917515c884e04076a55ca244bf57e71, type: 2}
       propertyPath: m_RootOrder
       value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 114753719282621566, guid: 0917515c884e04076a55ca244bf57e71,
-        type: 2}
-      propertyPath: _turningSpeed
-      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0917515c884e04076a55ca244bf57e71, type: 2}

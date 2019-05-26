@@ -6,6 +6,10 @@ namespace Animation_Behaviors {
 		private PlayerMovement _playerMovement;
 		private bool _highFall;
 
+		private static readonly int Speed = Animator.StringToHash("Speed");
+
+		private static readonly int MidAir = Animator.StringToHash("MidAir");
+
 		public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 			_playerMovement = animator.GetComponent<PlayerMovement>();
 		}
@@ -16,15 +20,16 @@ namespace Animation_Behaviors {
 				_highFall = true;
 			}
 
-			if (stateInfo.IsName("Landing") && _highFall) {
-				_playerMovement.SetPlayerSpeed(0f);
-				animator.SetFloat("Speed", 0f);
-				_highFall = false;
-			}
+			if (!_highFall || !stateInfo.IsName("Landing")) return;
+
+			// Interrupt movement on landing from a high fall
+			_playerMovement.SetPlayerSpeed(0f);
+			animator.SetFloat(Speed, 0f);
+			_highFall = false;
 		}
 
 		public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-			animator.SetBool("MidAir", false);
+			animator.SetBool(MidAir, false);
 		}
 	}
 }

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class GameState : MonoBehaviour {
 	private bool _gameStarted;
 
-	[SerializeField] private Text _gameStateText;
-	[SerializeField] private GameObject _player;
-	[SerializeField] private EnemyMovement _enemyMovement;
+	[SerializeField] private Text gameStateText;
+	[SerializeField] private GameObject player;
+	[SerializeField] private EnemyMovement enemyMovement;
 
 	private const float RestartDelay = 3f;
 	private float _restartTimer;
@@ -16,15 +16,15 @@ public class GameState : MonoBehaviour {
 	private PlayerHealth _playerHealth;
 
 	private void Start() {
-		_player.SetActive(true);
+		player.SetActive(true);
 
 		Cursor.visible = false;
 
-		_playerMovement = _player.GetComponent<PlayerMovement>();
-		_playerHealth = _player.GetComponent<PlayerHealth>();
+		_playerMovement = player.GetComponent<PlayerMovement>();
+		_playerHealth = player.GetComponent<PlayerHealth>();
 
 		_playerMovement.enabled = false;
-		_enemyMovement.enabled = false;
+		enemyMovement.enabled = false;
 	}
 
 	private void Update() {
@@ -32,7 +32,7 @@ public class GameState : MonoBehaviour {
 			StartGame();
 		}
 
-		if (_playerHealth.Alive == false) {
+		if (_playerHealth.alive == false) {
 			EndGame();
 			_restartTimer = _restartTimer + Time.deltaTime;
 
@@ -45,18 +45,18 @@ public class GameState : MonoBehaviour {
 	private void StartGame() {
 		_gameStarted = true;
 
-		_gameStateText.color = Color.clear;
+		gameStateText.color = Color.clear;
 
 		_playerMovement.enabled = true;
-		_enemyMovement.enabled = true;
+		enemyMovement.enabled = true;
 	}
 
 	private void EndGame() {
 		_gameStarted = false;
 
-		_gameStateText.color = Color.black;
-		_gameStateText.text = "Game Over";
+		gameStateText.color = Color.black;
+		gameStateText.text = "Game Over";
 
-		_player.SetActive(false);
+		player.SetActive(false);
 	}
 }

@@ -3,37 +3,43 @@ using UnityEngine;
 
 namespace Player {
 	public class PlayerMovement : MonoBehaviour {
-		[SerializeField] private float _dodgeForce = 4.0f;
-		[SerializeField] private float _jumpForce = 4.0f;
-		[SerializeField] private float _speedMultiplier = 1.6f;
-		[SerializeField] private float _turningSpeed = 5f;
+		[SerializeField] private float dodgeForce = 5.0f;
+		[SerializeField] private float jumpForce = 4.0f;
+		[SerializeField] private float speedMultiplier = 1.6f;
+		[SerializeField] private float turningSpeed = 7f;
 
-		public LayerMask GroundLayer;
+		public LayerMask groundLayer;
 
 		private bool _canDodge = true;
 		private float _playerSpeed;
-		private float _distanceToGround;
 		private float _jumpHeight;
+		private int _distanceToGround;
 		private Vector3 _movement;
 		private Rigidbody _playerRigidbody;
 		private Animator _playerAnimator;
 
+		private static readonly int JumpAnim = Animator.StringToHash("Jump");
+		private static readonly int HorizAnim = Animator.StringToHash("Horizontal");
+		private static readonly int SpeedAnim = Animator.StringToHash("Speed");
+		private static readonly int DistanceToGroundAnim = Animator.StringToHash("DistanceToGround");
+		private static readonly int MidAirAnim = Animator.StringToHash("MidAir");
+		private static readonly int DodgeAnim = Animator.StringToHash("Dodge");
+
 		private const float DodgeTimer = 1f;
 		private const float Acceleration = 6f;
+		private const float Deceleration = 4f;
 		private const float MaxSpeed = 2f;
 
 		void Start() {
 			_playerRigidbody = GetComponent<Rigidbody>();
 			_playerAnimator = GetComponent<Animator>();
-			_jumpHeight = _jumpForce / 3.5f;
+			_jumpHeight = jumpForce / 3.5f;
 		}
 
 		void Update() {
 			_movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
-//			_movement.x = Input.GetAxis("Horizontal");
-//			_movement.z = Input.GetAxis("Vertical");
 
-			_playerAnimator.SetFloat("Horizontal", _movement.x);
+			_playerAnimator.SetFloat(HorizAnim, _movement.x);
 
 			HandleInput();
 		}
@@ -45,7 +51,7 @@ namespace Player {
 
 		private void HandleMovement() {
 			if (_movement != Vector3.zero) {
-				_playerSpeed = _playerSpeed + Acceleration * Time.deltaTime;
+				_playerSpeed += Acceleration * Time.deltaTime;
 
 				if (_playerSpeed > MaxSpeed) {
 					_playerSpeed = MaxSpeed;
@@ -53,18 +59,23 @@ namespace Player {
 
 				Quaternion targetRotation = Quaternion.LookRotation(_movement, Vector3.up);
 				Quaternion newRotation =
-					Quaternion.Lerp(_playerRigidbody.rotation, targetRotation, _turningSpeed * Time.deltaTime);
+					Quaternion.Lerp(_playerRigidbody.rotation, targetRotation, turningSpeed * Time.deltaTime);
 
 				_playerRigidbody.MovePosition(transform.position +
-				                              _movement * Time.deltaTime * _playerSpeed * _speedMultiplier);
+				                              Time.deltaTime * _playerSpeed * speedMultiplier * _movement);
 				_playerRigidbody.MoveRotation(newRotation);
-				
-				_playerAnimator.SetFloat("Speed", _playerSpeed);
 			}
 			else {
-				_playerSpeed = 0f;
-				_playerAnimator.SetFloat("Speed", 0f);
+				// This makes transitioning to a stop more smooth
+				if (_playerSpeed > 0.1f) {
+					_playerSpeed -= Deceleration * Time.deltaTime;
+				}
+				else {
+					_playerSpeed = 0f;
+				}
 			}
+
+			_playerAnimator.SetFloat(SpeedAnim, _playerSpeed);
 		}
 
 		#region Getters and Setters
@@ -82,14 +93,13 @@ namespace Player {
 
 			// No need to do ground distance raycasting if we're grounded.
 			if (isGrounded) {
-				_distanceToGround = 0f;
-				_playerAnimator.SetFloat("DistanceToGround", _distanceToGround);
+				_distanceToGround = 0;
+				_playerAnimator.SetInteger(DistanceToGroundAnim, _distanceToGround);
 				return;
 			}
 
-			float distanceToGround = GetDistanceToGround();
-
-			_playerAnimator.SetFloat("DistanceToGround", distanceToGround);
+			GetDistanceToGround();
+			_playerAnimator.SetInteger(DistanceToGroundAnim, _distanceToGround);
 		}
 
 		private bool IsGrounded() {
@@ -100,12 +110,12 @@ namespace Player {
 
 			Physics.SphereCast(position + Vector3.up * (0.2f + Physics.defaultContactOffset),
 				0.2f - Physics.defaultContactOffset, direction, out groundHitInfo, distance,
-				GroundLayer, QueryTriggerInteraction.Ignore);
+				groundLayer, QueryTriggerInteraction.Ignore);
 
-			return groundHitInfo.collider != null;
+			return !ReferenceEquals(groundHitInfo.collider, null);
 		}
 
-		private float GetDistanceToGround() {
+		private void GetDistanceToGround() {
 			RaycastHit groundHitInfo;
 
 			Vector3 position = transform.position;
@@ -113,26 +123,24 @@ namespace Player {
 			float distance = 3.0f;
 
 			Debug.DrawRay(position, direction, Color.green);
-
 			Physics.Raycast(position + Vector3.up * (0.2f + Physics.defaultContactOffset),
-				direction, out groundHitInfo, distance, GroundLayer, QueryTriggerInteraction.Ignore);
+				direction, out groundHitInfo, distance, groundLayer, QueryTriggerInteraction.Ignore);
 
-			if (groundHitInfo.collider == null) {
-				_playerAnimator.SetBool("MidAir", true);
-				_distanceToGround = 3.0f;
+			// High Fall
+			if (ReferenceEquals(groundHitInfo.collider, null)) {
+				_playerAnimator.SetBool(MidAirAnim, true);
+				_distanceToGround = 3;
 			}
+			// Mid-range Fall
 			else if (groundHitInfo.distance >= _jumpHeight + 0.2f) {
-				_playerAnimator.SetBool("MidAir", true);
-				_distanceToGround = 2.0f;
+				_playerAnimator.SetBool(MidAirAnim, true);
+				_distanceToGround = 2;
 			}
+			// Landing
 			else if (groundHitInfo.distance < _jumpHeight / 2) {
-				_distanceToGround = 1.0f;
-				_playerAnimator.SetBool("MidAir", false);
-				// End jumps early if we're close enough to the ground
-				_playerAnimator.SetBool("Jump", false);
+				_distanceToGround = 1;
+				_playerAnimator.SetBool(MidAirAnim, false);
 			}
-
-			return _distanceToGround;
 		}
 
 		#endregion
@@ -152,8 +160,8 @@ namespace Player {
 		}
 
 		private void Jump() {
-			_playerAnimator.SetBool("Jump", true);
-			_playerRigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
+			_playerAnimator.SetBool(JumpAnim, true);
+			_playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
 		}
 
 		private void TryDodge() {
@@ -164,8 +172,8 @@ namespace Player {
 		}
 
 		private void Dodge() {
-			_playerAnimator.SetBool("Dodge", true);
-			Vector3 dodgeMovement = new Vector3(_movement.x * _dodgeForce, 0f, _movement.z * _dodgeForce);
+			_playerAnimator.SetBool(DodgeAnim, true);
+			Vector3 dodgeMovement = new Vector3(_movement.x * dodgeForce, 0f, _movement.z * dodgeForce);
 			_playerRigidbody.AddForce(dodgeMovement, ForceMode.VelocityChange);
 		}
 
@@ -179,16 +187,12 @@ namespace Player {
 	}
 }
 
-/* TODO: adjustments to falling
- * 	- transition from landing to running/walking better
- * 	- end jump animation early if landed
- * 		(ex: jumping up onto a platform continues animation instead of landing on platform)
- * 	- handle slopes
- * TODO: adjustments to movement
- * 	- add turning motions instead of instant turning
- * 		(blend tree?)
+/* TODO: adjustments to movement
+ * 	- fix turning motions
+ *  - handle delayed movement
+ *  - handle sudden stops
  * 	- handle clipping through walls and such
  * 		(clip through the pub walls, clip up the props)
- * TODO: finish IK handling?
+ * TODO: finish IK handling
  * TODO: Idle rotation
  */
