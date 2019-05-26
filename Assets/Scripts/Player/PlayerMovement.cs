@@ -89,16 +89,13 @@ namespace Player {
 		#region MidAir and Falling
 
 		private void HandleFalling() {
+			GetDistanceToGround();
 			bool isGrounded = IsGrounded();
 
-			// No need to do ground distance raycasting if we're grounded.
 			if (isGrounded) {
 				_distanceToGround = 0;
-				_playerAnimator.SetInteger(DistanceToGroundAnim, _distanceToGround);
-				return;
 			}
 
-			GetDistanceToGround();
 			_playerAnimator.SetInteger(DistanceToGroundAnim, _distanceToGround);
 		}
 
@@ -112,7 +109,7 @@ namespace Player {
 				0.2f - Physics.defaultContactOffset, direction, out groundHitInfo, distance,
 				groundLayer, QueryTriggerInteraction.Ignore);
 
-			return !ReferenceEquals(groundHitInfo.collider, null);
+			return !ReferenceEquals(groundHitInfo.collider, null) & _distanceToGround < 2;
 		}
 
 		private void GetDistanceToGround() {
@@ -149,12 +146,12 @@ namespace Player {
 
 		private void HandleInput() {
 			// Jump
-			if (Input.GetKeyDown(KeyCode.Space) && IsGrounded()) {
+			if (Input.GetKeyDown(KeyCode.Space) & IsGrounded() & !_playerAnimator.GetBool(DodgeAnim)) {
 				Jump();
 			}
 
 			// Dodge
-			if (Input.GetKeyDown(KeyCode.LeftShift) && IsGrounded()) {
+			if (Input.GetKeyDown(KeyCode.LeftShift) & IsGrounded()) {
 				TryDodge();
 			}
 		}
