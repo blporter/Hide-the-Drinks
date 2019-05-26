@@ -27,7 +27,7 @@ namespace Player {
 
 		private const float DodgeTimer = 1f;
 		private const float Acceleration = 6f;
-		private const float Deceleration = 3f;
+		private const float Deceleration = 4f;
 		private const float MaxSpeed = 2f;
 
 		void Start() {
@@ -98,9 +98,8 @@ namespace Player {
 				return;
 			}
 
-			int distanceToGround = GetDistanceToGround();
-
-			_playerAnimator.SetInteger(DistanceToGroundAnim, distanceToGround);
+			GetDistanceToGround();
+			_playerAnimator.SetInteger(DistanceToGroundAnim, _distanceToGround);
 		}
 
 		private bool IsGrounded() {
@@ -116,7 +115,7 @@ namespace Player {
 			return !ReferenceEquals(groundHitInfo.collider, null);
 		}
 
-		private int GetDistanceToGround() {
+		private void GetDistanceToGround() {
 			RaycastHit groundHitInfo;
 
 			Vector3 position = transform.position;
@@ -124,26 +123,24 @@ namespace Player {
 			float distance = 3.0f;
 
 			Debug.DrawRay(position, direction, Color.green);
-
 			Physics.Raycast(position + Vector3.up * (0.2f + Physics.defaultContactOffset),
 				direction, out groundHitInfo, distance, groundLayer, QueryTriggerInteraction.Ignore);
 
+			// High Fall
 			if (ReferenceEquals(groundHitInfo.collider, null)) {
 				_playerAnimator.SetBool(MidAirAnim, true);
 				_distanceToGround = 3;
 			}
+			// Mid-range Fall
 			else if (groundHitInfo.distance >= _jumpHeight + 0.2f) {
 				_playerAnimator.SetBool(MidAirAnim, true);
 				_distanceToGround = 2;
 			}
+			// Landing
 			else if (groundHitInfo.distance < _jumpHeight / 2) {
 				_distanceToGround = 1;
 				_playerAnimator.SetBool(MidAirAnim, false);
-				// End jumps early if we're close enough to the ground
-				_playerAnimator.SetBool(JumpAnim, false);
 			}
-
-			return _distanceToGround;
 		}
 
 		#endregion
@@ -190,17 +187,12 @@ namespace Player {
 	}
 }
 
-/* TODO: adjustments to falling
- * 	- transition from landing to running/walking better
- * 	- end jump animation early if landed
- * 		(ex: jumping up onto a platform continues animation instead of landing on platform)
- * 	- handle slopes (IK?)
- * TODO: adjustments to movement
+/* TODO: adjustments to movement
  * 	- fix turning motions
  *  - handle delayed movement
  *  - handle sudden stops
  * 	- handle clipping through walls and such
  * 		(clip through the pub walls, clip up the props)
- * TODO: finish IK handling?
+ * TODO: finish IK handling
  * TODO: Idle rotation
  */
