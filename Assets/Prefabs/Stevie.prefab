@@ -1816,7 +1816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d6a358cc05b4ff49b02d5839109f9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Alive: 0
+  alive: 0
 --- !u!114 &114545272999499602
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1844,13 +1844,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab9ff19996f99489a9c14a52e0cfb1eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dodgeForce: 4
-  _jumpForce: 4
-  _speedMultiplier: 1.6
-  _turningSpeed: 8
-  GroundLayer:
+  dodgeForce: 5
+  jumpForce: 4
+  speedMultiplier: 1.6
+  turningSpeed: 7
+  groundLayer:
     serializedVersion: 2
-    m_Bits: 19968
+    m_Bits: 17921
 --- !u!135 &135174991814225662
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -357,6 +357,11 @@ Prefab:
       propertyPath: _target
       value: 
       objectReference: {fileID: 123728819}
+    - target: {fileID: 114050623113484318, guid: 1afaf6d1d066e432281b1321fe4ca6b1,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 123728819}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1afaf6d1d066e432281b1321fe4ca6b1, type: 2}
   m_IsPrefabAsset: 0
@@ -490,8 +495,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df01d3c36874948d18a095f03c4b55c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 123728819}
-  _offset: {x: 0, y: 3, z: -3}
+  player: {fileID: 123728819}
+  offset: {x: 0, y: 2, z: -2}
 --- !u!20 &282840813
 Camera:
   m_ObjectHideFlags: 0
@@ -572,9 +577,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 821d76f2faeae4df3be7c647d45d2345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameStateText: {fileID: 1567154392}
-  _player: {fileID: 123728812}
-  _enemyMovement: {fileID: 80799816}
+  gameStateText: {fileID: 1567154392}
+  player: {fileID: 123728812}
+  enemyMovement: {fileID: 80799816}
 --- !u!4 &679999280
 Transform:
   m_ObjectHideFlags: 0

@@ -113,7 +113,7 @@ namespace Player {
 				0.2f - Physics.defaultContactOffset, direction, out groundHitInfo, distance,
 				groundLayer, QueryTriggerInteraction.Ignore);
 
-			return ReferenceEquals(groundHitInfo.collider, null);
+			return !ReferenceEquals(groundHitInfo.collider, null);
 		}
 
 		private int GetDistanceToGround() {
@@ -194,7 +194,7 @@ namespace Player {
  * 	- transition from landing to running/walking better
  * 	- end jump animation early if landed
  * 		(ex: jumping up onto a platform continues animation instead of landing on platform)
- * 	- handle slopes
+ * 	- handle slopes (IK?)
  * TODO: adjustments to movement
  * 	- fix turning motions
  *  - handle delayed movement
