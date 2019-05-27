@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class EnemyMovement : MonoBehaviour {
 	[SerializeField] private Transform target;
@@ -13,10 +14,16 @@ public class EnemyMovement : MonoBehaviour {
 
 	public float pauseLength = 3f;
 	public float chaseSpeed = 2.5f;
+	public float searchSpeed = 1.75f;
 	public float wanderSpeed = 1f;
 
 	private const float LineOfSight = 80.0f;
 	private const float TurningSpeed = 10f;
+
+	private enum FollowMethods {
+		Chase,
+		Search
+	}
 
 	void Start() {
 		_enemyAgent = GetComponent<NavMeshAgent>();
@@ -39,7 +46,7 @@ public class EnemyMovement : MonoBehaviour {
 				_isChasing = true;
 				_isSearching = false;
 				Debug.DrawRay(transform.position + up * 0.9f, direction - up * 0.75f, Color.red);
-				Chase();
+				FollowPlayer(FollowMethods.Chase);
 			}
 			else {
 				// lost line of sight of player, begin searching
@@ -48,7 +55,7 @@ public class EnemyMovement : MonoBehaviour {
 					_isSearching = true;
 					Debug.DrawRay(transform.position + up * 0.9f, direction - up * 0.75f,
 						Color.yellow);
-					Search();
+					FollowPlayer(FollowMethods.Search);
 				}
 			}
 		}
@@ -74,26 +81,34 @@ public class EnemyMovement : MonoBehaviour {
 
 	#region Movement Patterns
 
-	private void Chase() {
-		_enemyAgent.speed = chaseSpeed;
-		var position = target.position;
-		// Follow player
-		_currentDestination = new Vector3(position.x, 0f, position.z);
-		_enemyAgent.SetDestination(_currentDestination);
-	}
-
 	private void Wander() {
 		_enemyAgent.speed = wanderSpeed;
 		// Pick a new patrol spot
-		_currentDestination = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-4.4f, 4.4f));
+		_currentDestination = RandomLocation();
 		_enemyAgent.SetDestination(_currentDestination);
 	}
 
-	private void Search() {
-		Vector3 targetDirection = target.position;
+	private void FollowPlayer(FollowMethods method) {
+		switch (method) {
+			case FollowMethods.Chase:
+				_enemyAgent.speed = chaseSpeed;
+				break;
+			case FollowMethods.Search:
+				_enemyAgent.speed = searchSpeed;
+				break;
+			default:
+				_enemyAgent.speed = wanderSpeed;
+				break;
+		}
 
-		// Head towards last sighting of player
-		_currentDestination = new Vector3(targetDirection.x, 0f, targetDirection.z);
+		var position = target.position;
+		Vector3 destination = new Vector3(position.x, 0f, position.z);
+		_currentDestination = destination;
+
+		if (!IsValidDestination(destination)) {
+			_currentDestination = transform.position;
+		}
+
 		_enemyAgent.SetDestination(_currentDestination);
 	}
 
@@ -101,12 +116,35 @@ public class EnemyMovement : MonoBehaviour {
 		Vector3 targetDirection = target.position;
 		Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
 
-		// Look at last sighting of player
+		// Look at assumed position of player
 		transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, TurningSpeed * Time.deltaTime);
+	}
+
+	#endregion
+
+	#region Destination Methods
+
+	private Vector3 RandomLocation() {
+		Vector3 randomDirection = Random.insideUnitSphere * 3f;
+		Vector3 finalPosition = Vector3.zero;
+		NavMeshHit hit;
+
+		randomDirection += transform.position;
+		if (NavMesh.SamplePosition(randomDirection, out hit, 3f, 1)) {
+			finalPosition = hit.position;
+		}
+
+		return finalPosition;
 	}
 
 	private bool ReachedDestination(Vector3 location, float distance) {
 		return Vector3.Distance(transform.position, location) < distance;
+	}
+
+	private bool IsValidDestination(Vector3 destination) {
+		NavMeshPath path = new NavMeshPath();
+		_enemyAgent.CalculatePath(destination, path);
+		return path.status != NavMeshPathStatus.PathInvalid;
 	}
 
 	#endregion
