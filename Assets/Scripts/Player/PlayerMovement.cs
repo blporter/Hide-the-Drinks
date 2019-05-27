@@ -82,6 +82,10 @@ namespace Player {
 			_playerSpeed = speed;
 		}
 
+		public float GetPlayerSpeed() {
+			return _playerSpeed;
+		}
+
 		private void SetMovement(Vector3 movement, bool accelerate) {
 			Quaternion targetRotation = Quaternion.LookRotation(movement, Vector3.up);
 			Quaternion newRotation =
