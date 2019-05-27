@@ -15,6 +15,7 @@ namespace Player {
 		private float _jumpHeight;
 		private int _distanceToGround;
 		private Vector3 _movement;
+		private Vector3 _lastMovement;
 		private Rigidbody _playerRigidbody;
 		private Animator _playerAnimator;
 
@@ -51,24 +52,21 @@ namespace Player {
 
 		private void HandleMovement() {
 			if (_movement != Vector3.zero) {
+				_lastMovement = _movement;
 				_playerSpeed += Acceleration * Time.deltaTime;
 
 				if (_playerSpeed > MaxSpeed) {
 					_playerSpeed = MaxSpeed;
 				}
 
-				Quaternion targetRotation = Quaternion.LookRotation(_movement, Vector3.up);
-				Quaternion newRotation =
-					Quaternion.Lerp(_playerRigidbody.rotation, targetRotation, turningSpeed * Time.deltaTime);
-
-				_playerRigidbody.MovePosition(transform.position +
-				                              Time.deltaTime * _playerSpeed * speedMultiplier * _movement);
-				_playerRigidbody.MoveRotation(newRotation);
+				SetMovement(_movement, true);
 			}
 			else {
 				// This makes transitioning to a stop more smooth
 				if (_playerSpeed > 0.1f) {
 					_playerSpeed -= Deceleration * Time.deltaTime;
+
+					SetMovement(_lastMovement, false);
 				}
 				else {
 					_playerSpeed = 0f;
@@ -82,6 +80,23 @@ namespace Player {
 
 		public void SetPlayerSpeed(float speed) {
 			_playerSpeed = speed;
+		}
+
+		private void SetMovement(Vector3 movement, bool accelerate) {
+			Quaternion targetRotation = Quaternion.LookRotation(movement, Vector3.up);
+			Quaternion newRotation =
+				Quaternion.Lerp(_playerRigidbody.rotation, targetRotation, turningSpeed * Time.deltaTime);
+
+			if (accelerate) {
+				_playerRigidbody.MovePosition(transform.position +
+				                              Time.deltaTime * _playerSpeed * speedMultiplier * movement);
+			}
+			else {
+				_playerRigidbody.MovePosition(transform.position +
+				                              Time.deltaTime * _playerSpeed * speedMultiplier * movement / 3);
+			}
+
+			_playerRigidbody.MoveRotation(newRotation);
 		}
 
 		#endregion
@@ -109,7 +124,7 @@ namespace Player {
 				0.2f - Physics.defaultContactOffset, direction, out groundHitInfo, distance,
 				groundLayer, QueryTriggerInteraction.Ignore);
 
-			return !ReferenceEquals(groundHitInfo.collider, null) & _distanceToGround < 2;
+			return !ReferenceEquals(groundHitInfo.collider, null) && _distanceToGround < 2;
 		}
 
 		private void GetDistanceToGround() {
@@ -146,12 +161,12 @@ namespace Player {
 
 		private void HandleInput() {
 			// Jump
-			if (Input.GetKeyDown(KeyCode.Space) & IsGrounded() & !_playerAnimator.GetBool(DodgeAnim)) {
+			if (Input.GetKeyDown(KeyCode.Space) && IsGrounded() && !_playerAnimator.GetBool(DodgeAnim)) {
 				Jump();
 			}
 
 			// Dodge
-			if (Input.GetKeyDown(KeyCode.LeftShift) & IsGrounded()) {
+			if (Input.GetKeyDown(KeyCode.LeftShift) && IsGrounded()) {
 				TryDodge();
 			}
 		}
@@ -186,8 +201,8 @@ namespace Player {
 
 /* TODO: adjustments to movement
  * 	- fix turning motions
- *  - handle delayed movement
- *  - handle sudden stops
+ *  - remove input while falling and add momentum from jump?
+ *  - add more of a delay to movement on landing
  * 	- handle clipping through walls and such
  * 		(clip through the pub walls, clip up the props)
  * TODO: finish IK handling
