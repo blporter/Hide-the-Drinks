@@ -206,9 +206,8 @@ namespace Player {
 /* TODO: adjustments to movement
  * 	- fix turning motions
  *  - remove input while falling and add momentum from jump?
- *  - add more of a delay to movement on landing
+ *  - add more of a delay to movement on landing from a high fall?
  * 	- handle clipping through walls and such
  * 		(clip through the pub walls, clip up the props)
  * TODO: finish IK handling
- * TODO: Idle rotation
  */
